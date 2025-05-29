@@ -11,10 +11,18 @@ public class Committer {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String name;
+    private String username;
 
     private Integer point;
 
     private Integer solvedCount;
+
+    public Committer(String username) {
+        this.username = username;
+    }
+
+    public void updateSolvedCount(int addedCount, int removedCount) {
+        solvedCount = solvedCount + addedCount - removedCount;
+    }
 
 }
