@@ -19,6 +19,8 @@ public class Committer {
 
     public Committer(String username) {
         this.username = username;
+        this.solvedCount = 0;
+        this.point = 0;
     }
 
     public void updateSolvedCount(int addedCount, int removedCount) {
