@@ -6,11 +6,12 @@ import java.util.List;
 
 @Getter
 public class WebhookPayload {
-
     private List<Commit> commits;
 
     @Getter
     public static class Commit {
+        private String id;
+        private String message;
         private Author author;
         private Committer committer;
         private List<String> added;

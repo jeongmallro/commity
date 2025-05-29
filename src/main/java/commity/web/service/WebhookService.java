@@ -18,26 +18,29 @@ public class WebhookService {
     @Transactional
     public void update(List<WebhookPayload.Commit> commits) {
         commits.forEach(commit -> {
-            String authorName = commit.getAuthor().getUsername();
-            String committerName = commit.getCommitter().getUsername();
+            if (!commit.getMessage().startsWith("Merge")) {
 
-            if (authorName.equals(committerName)) {
-                Committer committer = committerRepository.findByUsername(authorName).orElseGet(() -> {
-                            Committer newCommitter = new Committer(committerName);
-                            return committerRepository.save(newCommitter);
-                        }
-                );
-                int addedCount = commit.getAdded().size();
-                int removedCount = commit.getRemoved().size();
+                String authorName = commit.getAuthor().getUsername();
+                String committerName = commit.getCommitter().getUsername();
 
-                committer.updateSolvedCount(addedCount, removedCount);
+                if (authorName.equals(committerName)) {
+                    Committer committer = committerRepository.findByUsername(authorName).orElseGet(() -> {
+                                Committer newCommitter = new Committer(committerName);
+                                return committerRepository.save(newCommitter);
+                            }
+                    );
+                    int addedCount = commit.getAdded().size();
+                    int removedCount = commit.getRemoved().size();
+
+                    committer.updateSolvedCount(addedCount, removedCount);
+                }
             }
-
         });
     }
 
     /*
     1. author == committer
+    message가 Merge로 시작하는 경우, Get a Commit API 호출을 통해 parents가 2개 이상인지 확인 -> 넘긴다.
     2. added -> solvedCount++
     3. removed -> solvedCount--
 

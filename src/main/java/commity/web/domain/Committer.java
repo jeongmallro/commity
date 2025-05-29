@@ -26,6 +26,10 @@ public class Committer {
     }
 
     public void updateSolvedCount(int addedCount, int removedCount) {
+        if (solvedCount + addedCount - removedCount < 0) {
+            throw new RuntimeException("문제 해결 개수는 0개 미만일 수 없습니다.");
+        }
+
         solvedCount = solvedCount + addedCount - removedCount;
     }
 
