@@ -1,0 +1,55 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+   <meta charset="utf-8">
+   <link href="../css/bootstrap.min.css"
+         th:href="@{/css/bootstrap.min.css}" rel="stylesheet">
+    <style>
+        .container {
+            max-width: 560px;
+        }
+
+        .table th, .table td {
+            text-align: center;
+            vertical-align: middle;
+        }
+
+        body {
+            font-family: 'Wanted Sans Variable', sans-serif;
+        }
+    </style>
+
+    <style>
+    @import url('https://fastly.jsdelivr.net/gh/wanteddev/wanted-sans@v1.0.1/packages/wanted-sans/fonts/webfonts/variable/split/WantedSansVariable.min.css');
+
+    body {
+        font-family: 'Wanted Sans Variable', sans-serif;
+    }
+    </style>
+</head>
+<body>
+
+<div class="container" style="max-width: 600px">
+    <div class="py-5 text-center">
+        <h2>실시간 커밋</h2>
+    </div>
+
+    <div>
+        <table class="table">
+            <thead>
+            <tr>
+                <th>유저</th>
+                <th>해결한 문제 수</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="committer : ${committers}">
+                <td th:text="${committer.username}">유저A</td>
+                <td th:text="${committer.solvedCount}">10</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+ </div> <!-- /container -->
+ </body>
+ </html>
