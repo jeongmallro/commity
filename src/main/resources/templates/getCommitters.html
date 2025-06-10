@@ -9,15 +9,31 @@
             max-width: 560px;
         }
 
+        .table {
+            table-layout: fixed;
+            width: 100%;
+        }
+
         .table th, .table td {
             text-align: center;
             vertical-align: middle;
+        }
+
+        .table th:nth-child(1),
+        .table td:nth-child(1) {
+            min-width: 120px;
+        }
+
+        .table th:nth-child(2),
+        .table td:nth-child(2) {
+            min-width: 80px;
         }
 
         body {
             font-family: 'Wanted Sans Variable', sans-serif;
         }
     </style>
+
 
     <style>
     @import url('https://fastly.jsdelivr.net/gh/wanteddev/wanted-sans@v1.0.1/packages/wanted-sans/fonts/webfonts/variable/split/WantedSansVariable.min.css');
@@ -31,11 +47,14 @@
 
 <div class="container" style="max-width: 600px">
     <div class="py-5 text-center">
-        <h2>실시간 커밋</h2>
+        <h2>COMMITY</h2>
     </div>
 
+    <button type="button" class="btn btn-warning me-md-1">실시간 커밋</button>
+    <button type="button" class="btn btn-warning">포인트</button>
+
     <div>
-        <table class="table">
+        <table class="table mt-2">
             <thead>
             <tr>
                 <th>유저</th>
@@ -43,13 +62,63 @@
             </tr>
             </thead>
             <tbody>
-            <tr th:each="committer : ${committers}">
+            <tr th:each="committer : ${committers}" th:id="'committer-' + ${committer.username}">
                 <td th:text="${committer.username}">유저A</td>
-                <td th:text="${committer.solvedCount}">10</td>
+                <td th:id="'solved-' + ${committer.username}" th:text="${committer.solvedCount}">10</td>
             </tr>
+
             </tbody>
         </table>
+
+        <div class="d-grid gap-2 col-2 mx-auto">
+            <button type="button" class="btn btn-warning">완료</button>
+        </div>
     </div>
+
+
+    <script>
+        const eventSource = new EventSource("/sse");
+
+        eventSource.onmessage = (event) => {
+
+            // "connected" 메시지 처리
+            if (event.data === "connected") {
+                console.log("SSE connected");
+                return;
+            }
+            const data = JSON.parse(event.data);
+            const { username, solvedCount } = data;
+
+            // 1. 해당 solvedCount 셀 찾기
+            const solvedCell = document.getElementById(`solved-${username}`);
+
+            console.log(`Updated ${username}'s solved count to ${solvedCount}`);
+            console.log(solvedCell);
+
+            // 2. 존재하면 값 업데이트
+                if (solvedCell) {
+                    solvedCell.textContent = solvedCount;
+                } else {
+                    // 3. 존재하지 않으면 새로운 행 추가
+                    const tbody = document.querySelector("table.table tbody");
+
+                    const newRow = document.createElement("tr");
+                    newRow.id = `committer-${username}`;
+
+                    const usernameCell = document.createElement("td");
+                    usernameCell.textContent = username;
+
+                    const solvedCountCell = document.createElement("td");
+                    solvedCountCell.id = `solved-${username}`;
+                    solvedCountCell.textContent = solvedCount;
+
+                    newRow.appendChild(usernameCell);
+                    newRow.appendChild(solvedCountCell);
+
+                    tbody.appendChild(newRow);
+                }
+            };
+    </script>
  </div> <!-- /container -->
  </body>
  </html>

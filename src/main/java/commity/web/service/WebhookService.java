@@ -7,7 +7,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 @Service
 @RequiredArgsConstructor
@@ -16,7 +18,8 @@ public class WebhookService {
     private final CommitterRepository committerRepository;
 
     @Transactional
-    public void update(List<WebhookPayload.Commit> commits) {
+    public List<CommitterUpdateResponse> update(List<WebhookPayload.Commit> commits) {
+        List<CommitterUpdateResponse> committers = new ArrayList<>();
         commits.forEach(commit -> {
             if (!commit.getMessage().startsWith("Merge")) {
 
@@ -32,10 +35,12 @@ public class WebhookService {
                     int addedCount = commit.getAdded().size();
                     int removedCount = commit.getRemoved().size();
 
-                    committer.updateSolvedCount(addedCount, removedCount);
+                    int updatedSolvedCount = committer.updateSolvedCount(addedCount, removedCount);
+                    committers.add(new CommitterUpdateResponse(committer.getUsername(), updatedSolvedCount));
                 }
             }
         });
+        return committers;
     }
 
     /*
@@ -45,5 +50,32 @@ public class WebhookService {
     3. removed -> solvedCount--
 
      */
+
+    @Transactional
+    public List<CommitterUpdateResponse> getCommitterUpdateResponses() {
+        Committer committerA = committerRepository.findByUsername("userA").orElseGet(() -> {
+                    Committer newCommitter = new Committer("userA");
+                    return committerRepository.save(newCommitter);
+                }
+        );
+        Committer committerB = committerRepository.findByUsername("userB").orElseGet(() -> {
+                    Committer newCommitter = new Committer("userB");
+                    return committerRepository.save(newCommitter);
+                }
+        );
+
+        Random random = new Random();
+        int updatedA = committerA.updateSolvedCount(random.nextInt(), 3);
+        System.out.println("updatedA = " + updatedA);
+        int updatedB = committerB.updateSolvedCount(random.nextInt(), 3);
+        System.out.println("updatedB = " + updatedB);
+
+        List<CommitterUpdateResponse> list = new ArrayList<>();
+        CommitterUpdateResponse userA = new CommitterUpdateResponse("userA", updatedA);
+        list.add(userA);
+        CommitterUpdateResponse userB = new CommitterUpdateResponse("userB", updatedB);
+        list.add(userB);
+        return list;
+    }
 
 }

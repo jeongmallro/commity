@@ -27,12 +27,13 @@ public class Committer {
         this.point = 0;
     }
 
-    public void updateSolvedCount(int addedCount, int removedCount) {
-        if (solvedCount + addedCount - removedCount < 0) {
-            throw new RuntimeException("문제 해결 개수는 0개 미만일 수 없습니다.");
-        }
+    public int updateSolvedCount(int addedCount, int removedCount) {
+//        if (this.solvedCount + addedCount - removedCount < 0) {
+//            throw new RuntimeException("문제 해결 개수는 0개 미만일 수 없습니다.");
+//        }
 
-        solvedCount = solvedCount + addedCount - removedCount;
+        this.solvedCount = this.solvedCount + addedCount - removedCount;
+        return this.solvedCount;
     }
 
 }
