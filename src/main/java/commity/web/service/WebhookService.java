@@ -43,14 +43,6 @@ public class WebhookService {
         return committers;
     }
 
-    /*
-    1. author == committer
-    message가 Merge로 시작하는 경우, Get a Commit API 호출을 통해 parents가 2개 이상인지 확인 -> 넘긴다.
-    2. added -> solvedCount++
-    3. removed -> solvedCount--
-
-     */
-
     @Transactional
     public List<CommitterUpdateResponse> getCommitterUpdateResponses() {
         Committer committerA = committerRepository.findByUsername("userA").orElseGet(() -> {
@@ -66,9 +58,7 @@ public class WebhookService {
 
         Random random = new Random();
         int updatedA = committerA.updateSolvedCount(random.nextInt(), 3);
-        System.out.println("updatedA = " + updatedA);
         int updatedB = committerB.updateSolvedCount(random.nextInt(), 3);
-        System.out.println("updatedB = " + updatedB);
 
         List<CommitterUpdateResponse> list = new ArrayList<>();
         CommitterUpdateResponse userA = new CommitterUpdateResponse("userA", updatedA);
