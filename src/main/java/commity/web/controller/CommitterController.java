@@ -22,4 +22,11 @@ public class CommitterController {
         return "getCommitters";
     }
 
+    @GetMapping("/point")
+    public String getPoints(Model model) {
+        List<Committer> committers = committerRepository.findAll();
+        model.addAttribute("committers", committers);
+        return "getPoints";
+    }
+
 }

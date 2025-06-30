@@ -58,13 +58,13 @@
             <thead>
             <tr>
                 <th>유저</th>
-                <th>해결한 문제 수</th>
+                <th>포인트</th>
             </tr>
             </thead>
             <tbody>
             <tr th:each="committer : ${committers}" th:id="'committer-' + ${committer.username}">
                 <td th:text="${committer.username}">유저A</td>
-                <td th:id="'solved-' + ${committer.username}" th:text="${committer.solvedCount}">10</td>
+                <td th:text="${committer.point}">10</td>
             </tr>
 
             </tbody>
@@ -76,49 +76,6 @@
     </div>
 
 
-    <script>
-        const eventSource = new EventSource("/sse");
-
-        eventSource.onmessage = (event) => {
-
-            // "connected" 메시지 처리
-            if (event.data === "connected") {
-                console.log("SSE connected");
-                return;
-            }
-            const data = JSON.parse(event.data);
-            const { username, solvedCount } = data;
-
-            // 1. 해당 solvedCount 셀 찾기
-            const solvedCell = document.getElementById(`solved-${username}`);
-
-            console.log(`Updated ${username}'s solved count to ${solvedCount}`);
-            console.log(solvedCell);
-
-            // 2. 존재하면 값 업데이트
-                if (solvedCell) {
-                    solvedCell.textContent = solvedCount;
-                } else {
-                    // 3. 존재하지 않으면 새로운 행 추가
-                    const tbody = document.querySelector("table.table tbody");
-
-                    const newRow = document.createElement("tr");
-                    newRow.id = `committer-${username}`;
-
-                    const usernameCell = document.createElement("td");
-                    usernameCell.textContent = username;
-
-                    const solvedCountCell = document.createElement("td");
-                    solvedCountCell.id = `solved-${username}`;
-                    solvedCountCell.textContent = solvedCount;
-
-                    newRow.appendChild(usernameCell);
-                    newRow.appendChild(solvedCountCell);
-
-                    tbody.appendChild(newRow);
-                }
-            };
-    </script>
  </div> <!-- /container -->
  </body>
  </html>
