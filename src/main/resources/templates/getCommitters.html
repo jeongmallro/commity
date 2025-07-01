@@ -47,11 +47,16 @@
 
 <div class="container" style="max-width: 600px">
     <div class="py-5 text-center">
-        <h2>COMMITY</h2>
+        <a href="/" class="text-decoration-none text-dark">
+            <h2>COMMITY</h2>
+        </a>
     </div>
 
-    <a href="/" class="btn btn-warning me-md-1">실시간 커밋</a>
-    <a href="/point" class="btn btn-warning">포인트</a>
+    <div class="d-flex">
+        <a href="/" class="btn btn-warning me-md-1">실시간 커밋</a>
+        <a href="/point" class="btn btn-warning">포인트</a>
+        <a href="/admin" class="btn btn-outline-primary ms-auto">어드민</a>
+    </div>
 
     <div>
         <table class="table mt-2">
@@ -64,15 +69,15 @@
             <tbody>
             <tr th:each="committer : ${committers}" th:id="'committer-' + ${committer.username}">
                 <td th:text="${committer.username}">유저A</td>
-                <td th:id="'solved-' + ${committer.username}" th:text="${committer.solvedCount}">10</td>
+                <td th:id="'solved-' + ${committer.username}" th:text="${committer.solvedCount} + '/' + ${solvedCountLimit}" >10</td>
             </tr>
 
             </tbody>
         </table>
 
-        <div class="d-grid gap-2 col-2 mx-auto">
-            <button type="button" class="btn btn-warning">완료</button>
-        </div>
+        <form action="/point" method="POST" class="d-grid gap-2 col-2 mx-auto">
+          <button type="submit" class="btn btn-warning">완료</button>
+        </form>
     </div>
 
 

@@ -13,27 +13,41 @@ import lombok.NoArgsConstructor;
 public class Committer {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
+    private Integer id;
     private String username;
-
     private Integer point;
-
     private Integer solvedCount;
+    private Integer totalSolvedCount;
 
-    public Committer(String username) {
-        this.username = username;
-        this.solvedCount = 0;
-        this.point = 0;
+    public static Committer ofCreate(String username) {
+        Committer committer = new Committer();
+        committer.username = username;
+        committer.solvedCount = 0;
+        committer.point = 0;
+        committer.totalSolvedCount = 0;
+
+        return committer;
     }
 
     public int updateSolvedCount(int addedCount, int removedCount) {
-//        if (this.solvedCount + addedCount - removedCount < 0) {
-//            throw new RuntimeException("문제 해결 개수는 0개 미만일 수 없습니다.");
-//        }
+        if (solvedCount + addedCount - removedCount < 0) {
+            throw new RuntimeException("문제 해결 개수는 0개 미만일 수 없습니다.");
+        }
 
-        this.solvedCount = this.solvedCount + addedCount - removedCount;
-        return this.solvedCount;
+        solvedCount = solvedCount + addedCount - removedCount;
+        return solvedCount;
     }
 
+    public int updatePoint(int point) {
+        this.point += point;
+        return this.point;
+    }
+
+    public void updateTotalSolvedCount(int totalSolvedCount) {
+        this.totalSolvedCount += totalSolvedCount;
+    }
+
+    public void initSolvedCount() {
+        this.solvedCount = 0;
+    }
 }
