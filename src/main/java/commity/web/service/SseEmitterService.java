@@ -1,6 +1,7 @@
 package commity.web.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import commity.web.dto.CommitterUpdateDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
@@ -39,10 +40,10 @@ public class SseEmitterService {
         return emitter;
     }
 
-    public void broadcast(List<CommitterUpdateResponse> eventPayload) {
+    public void broadcast(List<CommitterUpdateDto> eventPayload) {
    		emitters.forEach((emitterId, emitter) -> {
    			try {
-                for (CommitterUpdateResponse payload : eventPayload) {
+                for (CommitterUpdateDto payload : eventPayload) {
                     String data = objectMapper.writeValueAsString(payload);
                     emitter.send(data, MediaType.APPLICATION_JSON);
                 }

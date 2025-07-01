@@ -1,7 +1,7 @@
 spring:
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto:
     show-sql: true
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
@@ -19,3 +19,5 @@ logging:
           descriptor:
             sql:
               BasicBinder: TRACE
+github:
+  token: ${TOKEN}

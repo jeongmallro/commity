@@ -1,6 +1,6 @@
 package commity.web.controller;
 
-import commity.web.service.CommitterUpdateResponse;
+import commity.web.dto.CommitterUpdateDto;
 import commity.web.service.SseEmitterService;
 import commity.web.service.WebhookService;
 import lombok.RequiredArgsConstructor;
@@ -20,7 +20,6 @@ public class SseController {
     private final SseEmitterService sseEmitterService;
     private final WebhookService webhookService;
 
-
     @GetMapping(path = "/sse", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public SseEmitter subscribe() throws IOException {
         String emitterId = UUID.randomUUID().toString();
@@ -29,7 +28,7 @@ public class SseController {
 
     @GetMapping("/test-sse")
     public void testSSE() {
-        List<CommitterUpdateResponse> list = webhookService.getCommitterUpdateResponses();
+        List<CommitterUpdateDto> list = webhookService.getCommitterUpdateResponses();
         sseEmitterService.broadcast(list);
     }
 }
