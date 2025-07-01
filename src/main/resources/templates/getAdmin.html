@@ -1,0 +1,92 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+   <meta charset="utf-8">
+   <link href="../css/bootstrap.min.css"
+         th:href="@{/css/bootstrap.min.css}" rel="stylesheet">
+    <style>
+        .container {
+            max-width: 560px;
+        }
+
+        .table {
+            table-layout: fixed;
+            width: 100%;
+        }
+
+        .table th, .table td {
+            text-align: center;
+            vertical-align: middle;
+        }
+
+        .table th:nth-child(1),
+        .table td:nth-child(1) {
+            min-width: 120px;
+        }
+
+        .table th:nth-child(2),
+        .table td:nth-child(2) {
+            min-width: 80px;
+        }
+
+        body {
+            font-family: 'Wanted Sans Variable', sans-serif;
+        }
+    </style>
+
+
+    <style>
+    @import url('https://fastly.jsdelivr.net/gh/wanteddev/wanted-sans@v1.0.1/packages/wanted-sans/fonts/webfonts/variable/split/WantedSansVariable.min.css');
+
+    body {
+        font-family: 'Wanted Sans Variable', sans-serif;
+    }
+    </style>
+</head>
+<body>
+
+<div class="container" style="max-width: 600px">
+    <div class="py-5 text-center">
+        <a href="/" class="text-decoration-none text-dark">
+            <h2>COMMITY</h2>
+        </a>
+    </div>
+
+    <form th:action="@{admin/set}" method="post">
+        <div class="mb-3">
+            <label for="solvedCountGoal" class="form-label">목표 문제수</label>
+            <input type="number" class="form-control" id="solvedCountGoal" name="solvedCountGoal"
+                   placeholder="한 회차 목표 문제수"
+                   th:value="${admin.solvedCountGoal}">
+        </div>
+
+        <div class="mb-3">
+            <label for="pointPerProblem" class="form-label">문제당 포인트</label>
+            <input type="number" class="form-control" id="pointPerProblem" name="pointPerProblem"
+                   placeholder="한 문제당 포인트"
+                   th:value="${admin.pointPerProblem}">
+        </div>
+
+        <div class="mb-3">
+            <label for="pointLimit" class="form-label">포인트 제한</label>
+            <input type="number" class="form-control" id="pointLimit" name="pointLimit"
+                   placeholder="포인트 제한 미달 시 탈락"
+                   th:value="${admin.pointLimit}">
+        </div>
+
+        <div class="mb-3">
+            <label for="code" class="form-label">어드민 코드</label>
+            <input type="number" class="form-control" id="code" name="code"
+                   placeholder="어드민 최초 생성 시 설정한 코드">
+        </div>
+
+        <div class="d-grid gap-2 col-2 mx-auto">
+            <button type="submit" class="btn btn-primary">제출</button>
+        </div>
+    </form>
+
+
+
+ </div> <!-- /container -->
+ </body>
+ </html>
