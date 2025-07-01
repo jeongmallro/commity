@@ -1,4 +1,4 @@
-package commity.web.controller;
+package commity.web.dto;
 
 import lombok.Getter;
 
