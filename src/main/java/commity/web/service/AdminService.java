@@ -5,6 +5,8 @@ import commity.web.dto.AdminSetForm;
 import commity.web.domain.Admin;
 import commity.web.repository.AdminRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,6 +23,7 @@ public class AdminService {
     }
 
     @Transactional
+    @CachePut("admin")
     public void setAdmin(AdminSetForm adminSetForm) {
         int code = adminSetForm.getCode();
         Admin admin = adminRepository.findAll().get(0);
@@ -35,6 +38,7 @@ public class AdminService {
 
     }
 
+    @Cacheable("admin")
     public AdminDto getAdmin() {
         Admin admin = adminRepository.findAll().get(0);
         return AdminDto.from(admin);
