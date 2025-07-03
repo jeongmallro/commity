@@ -1,7 +1,6 @@
 package commity.web.dto;
 
 import lombok.Getter;
-import org.antlr.v4.runtime.tree.Tree;
 
 import java.util.List;
 

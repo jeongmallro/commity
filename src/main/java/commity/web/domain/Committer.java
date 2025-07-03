@@ -29,13 +29,17 @@ public class Committer {
         return committer;
     }
 
-    public int updateSolvedCount(int addedCount, int removedCount) {
-        if (solvedCount + addedCount - removedCount < 0) {
+    public int update(int addedCount, int removedCount, int pointPerProblem) {
+        int change = addedCount - removedCount;
+
+        if (this.solvedCount + change < 0) {
             throw new RuntimeException("문제 해결 개수는 0개 미만일 수 없습니다.");
         }
 
-        solvedCount = solvedCount + addedCount - removedCount;
-        return solvedCount;
+        this.solvedCount += change;
+        this.totalSolvedCount += change;
+        this.point += change * pointPerProblem;
+        return this.solvedCount;
     }
 
     public int updatePoint(int point) {

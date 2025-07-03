@@ -23,6 +23,7 @@ import java.util.*;
 public class WebhookService {
 
     private final CommitterRepository committerRepository;
+    private final AdminService adminService;
 
     @Value("${github.token}")
     private String token;
@@ -30,6 +31,7 @@ public class WebhookService {
     private static final String CONTENT_PATH = "https://api.github.com/repos/psCodingTest/CodingTest/git/trees/main";
     private static final String COMMIT_PATH = "https://api.github.com/repos/psCodingTest/CodingTest/commits?path=";
 
+    //TODO: "Merge"로 시작하는 커밋 메시지의 경우 Get a Commit API 호출을 통해 parents 개수 확인
     @Transactional
     public List<CommitterUpdateDto> update(List<WebhookPayload.Commit> commits) {
         List<CommitterUpdateDto> committers = new ArrayList<>();
@@ -44,63 +46,14 @@ public class WebhookService {
                     int addedCount = commit.getAdded().size();
                     int removedCount = commit.getRemoved().size();
 
-                    int updatedSolvedCount = committer.updateSolvedCount(addedCount, removedCount);
+                    Integer pointPerProblem = adminService.getAdmin().getPointPerProblem();
+                    int updatedSolvedCount = committer.update(addedCount, removedCount, pointPerProblem);
+
                     committers.add(new CommitterUpdateDto(committer.getUsername(), updatedSolvedCount));
                 }
             }
         });
         return committers;
-    }
-
-    /*
-    1. author == committer
-    message가 Merge로 시작하는 경우, Get a Commit API 호출을 통해 parents가 2개 이상인지 확인 -> 넘긴다.
-    2. added -> solvedCount++
-    added = 추가된 파일 개수
-    3. removed -> solvedCount--
-    removed = 삭제된 파일 개수
-
-    파일 수정하면 modified 에 카운트됨
-    따라서 수정하는 거는 고려하지 않아도 됨
-     */
-
-    @Transactional
-    public List<CommitterUpdateDto> get(List<WebhookPayload.Commit> commits) {
-        List<CommitterUpdateDto> committers = new ArrayList<>();
-        commits.forEach(commit -> {
-            if (!commit.getMessage().startsWith("Merge")) {
-
-                String authorName = commit.getAuthor().getUsername();
-                String committerName = commit.getCommitter().getUsername();
-
-                if (authorName.equals(committerName)) {
-                    Committer committer = findOrCreate(authorName);
-                    int addedCount = commit.getAdded().size();
-                    int removedCount = commit.getRemoved().size();
-
-                    int updatedSolvedCount = committer.updateSolvedCount(addedCount, removedCount);
-                    committers.add(new CommitterUpdateDto(committer.getUsername(), updatedSolvedCount));
-                }
-            }
-        });
-        return committers;
-    }
-
-    @Transactional
-    public List<CommitterUpdateDto> getCommitterUpdateResponses() {
-        Committer committerA = findOrCreate("userA");
-        Committer committerB = findOrCreate("userB");
-
-        Random random = new Random();
-        int updatedA = committerA.updateSolvedCount(random.nextInt(), 3);
-        int updatedB = committerB.updateSolvedCount(random.nextInt(), 3);
-
-        List<CommitterUpdateDto> list = new ArrayList<>();
-        CommitterUpdateDto userA = new CommitterUpdateDto("userA", updatedA);
-        list.add(userA);
-        CommitterUpdateDto userB = new CommitterUpdateDto("userB", updatedB);
-        list.add(userB);
-        return list;
     }
 
     @Transactional
@@ -135,12 +88,6 @@ public class WebhookService {
         }
     }
 
-    private int getCount(List<TreeResponse.Tree> solvedProblems) {
-        return (int) solvedProblems.stream()
-                .filter(p -> isMarkdown(p.getPath()))
-                .count();
-    }
-
     @Transactional
     public Committer findOrCreate(String username) {
         return committerRepository.findByUsername(username).orElseGet(() -> {
@@ -160,10 +107,6 @@ public class WebhookService {
         return commitPayload.get(0).getAuthor();
     }
 
-    private List<TreeResponse.Tree> getTree(String url) {
-        return callGithubRestApi(url, new ParameterizedTypeReference<TreeResponse>(){}).getTree();
-    }
-
     private List<CommitPayload> getCommitPayload(String folder, String subFolder, String file) {
         String url = COMMIT_PATH + folder + "/" + subFolder + "/" + file;
         return callGithubRestApi(url, new ParameterizedTypeReference<List<CommitPayload>>(){});
@@ -181,7 +124,17 @@ public class WebhookService {
         return restTemplate.exchange(url, HttpMethod.GET, entity, responseType).getBody();
     }
 
+    private List<TreeResponse.Tree> getTree(String url) {
+        return callGithubRestApi(url, new ParameterizedTypeReference<TreeResponse>(){}).getTree();
+    }
+
     private boolean isMarkdown(String path) {
         return path.endsWith(".md");
+    }
+
+    private int getCount(List<TreeResponse.Tree> solvedProblems) {
+        return (int) solvedProblems.stream()
+                .filter(p -> isMarkdown(p.getPath()))
+                .count();
     }
 }
