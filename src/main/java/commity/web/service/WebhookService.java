@@ -1,9 +1,6 @@
 package commity.web.service;
 
-import commity.web.dto.CommitPayload;
-import commity.web.dto.CommitterUpdateDto;
-import commity.web.dto.TreeResponse;
-import commity.web.dto.WebhookPayload;
+import commity.web.dto.*;
 import commity.web.domain.Committer;
 import commity.web.repository.CommitterRepository;
 import lombok.RequiredArgsConstructor;

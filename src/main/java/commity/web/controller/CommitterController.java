@@ -1,12 +1,14 @@
 package commity.web.controller;
 
 import commity.web.domain.Committer;
+import commity.web.dto.SavePointDto;
 import commity.web.service.AdminService;
 import commity.web.service.CommitterService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import java.util.List;
@@ -37,8 +39,8 @@ public class CommitterController {
     }
 
     @PostMapping("/point")
-    public String savePoint() {
-        committerService.update();
+    public String savePoint(@ModelAttribute SavePointDto savePointDto) {
+        committerService.update(savePointDto);
         return "redirect:/";
     }
 }
